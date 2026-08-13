@@ -124,5 +124,11 @@ def main():
         json.dump(model_stats, f, indent=2)
     print(f"Model training stats saved to {stats_path}")
 
+    # Also save to src/data/ for next.js imports
+    src_stats_path = os.path.join(output_dir, 'model_stats.json')
+    with open(src_stats_path, 'w', encoding='utf-8') as f:
+        json.dump(model_stats, f, indent=2)
+    print(f"Model training stats saved to {src_stats_path}")
+
 if __name__ == "__main__":
     main()

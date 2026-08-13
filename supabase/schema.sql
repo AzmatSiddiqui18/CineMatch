@@ -4,6 +4,7 @@
 -- 1. Create the movies table
 CREATE TABLE IF NOT EXISTS public.movies (
     id BIGINT PRIMARY KEY,
+    tmdb_id BIGINT,
     title TEXT NOT NULL,
     original_title TEXT,
     overview TEXT,

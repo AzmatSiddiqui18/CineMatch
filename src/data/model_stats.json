@@ -1,0 +1,7 @@
+{
+  "dataset_size": 4325,
+  "vocab_size": 15000,
+  "top_k": 10,
+  "training_time_seconds": 16.79,
+  "last_trained": "2026-08-14 04:04:41"
+}

@@ -1,104 +1,141 @@
 import React from "react";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import SearchBox from "@/components/SearchBox";
+import MovieCard from "@/components/MovieCard";
+import { supabase } from "@/lib/supabase";
+import { Film, Award, GitBranch, Binary, LineChart } from "lucide-react";
 
-export default function Home() {
+// Server component to fetch starting popular movies
+async function getPopularMovies() {
+  try {
+    const { data, error } = await supabase
+      .from("movies")
+      .select("id, title, release_date, genres, vote_average, poster_path")
+      .order("popularity", { ascending: false })
+      .limit(10);
+
+    if (error) {
+      console.error("Database error loading starting popular movies:", error);
+      return [];
+    }
+    return data || [];
+  } catch (e) {
+    console.error("Failed to load popular movies:", e);
+    return [];
+  }
+}
+
+export default async function Home() {
+  const popularMovies = await getPopularMovies();
+
   return (
-    <div className="relative min-h-screen flex flex-col justify-between items-center overflow-hidden bg-[#09090b] font-[family-name:var(--font-geist-sans)] text-[#fafafa] px-4 py-8 md:px-8 md:py-12">
-      {/* Cinematic Ambient Background Glows */}
-      <div className="absolute top-[-10%] left-[-20%] w-[60%] h-[60%] rounded-full bg-rose-900/10 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-20%] w-[60%] h-[60%] rounded-full bg-violet-900/10 blur-[120px] pointer-events-none" />
-      
-      {/* Header / Logo */}
-      <header className="w-full max-w-5xl flex justify-between items-center z-10">
-        <div className="flex items-center gap-2 font-bold text-xl tracking-wider select-none bg-gradient-to-r from-rose-500 to-amber-500 bg-clip-text text-transparent">
-          CineMatch
-        </div>
-        <div className="flex items-center">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-red-500/10 text-red-400 border border-red-500/20 shadow-[0_0_15px_rgba(239,68,68,0.1)]">
-            <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-            Coming Soon
+    <div className="relative min-h-screen flex flex-col bg-zinc-950 text-zinc-100 font-sans selection:bg-rose-500/30 selection:text-rose-200 overflow-hidden">
+      {/* Subtle Background Glows */}
+      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] rounded-full bg-rose-900/5 blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/3 right-1/4 w-[400px] h-[400px] rounded-full bg-amber-900/5 blur-[120px] pointer-events-none" />
+
+      <Navbar />
+
+      <main className="flex-1 flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8 py-12 md:py-20 z-10 max-w-7xl mx-auto w-full">
+        {/* Hero Section */}
+        <section className="w-full text-center max-w-3xl mx-auto mb-16">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20 mb-6">
+            Content-Based Recommendation Engine
           </span>
-        </div>
-      </header>
-
-      {/* Main Content Area */}
-      <main className="w-full max-w-2xl flex-1 flex flex-col justify-center items-center py-16 z-10">
-        <div className="relative group w-full p-8 md:p-12 rounded-3xl border border-white/5 bg-zinc-900/40 backdrop-blur-xl shadow-2xl flex flex-col items-center text-center">
-          {/* Decorative Film/AI Icon */}
-          <div className="mb-8 w-16 h-16 rounded-2xl bg-gradient-to-tr from-rose-500 to-amber-500 p-0.5 shadow-lg shadow-rose-500/20">
-            <div className="w-full h-full rounded-[14px] bg-[#09090b] flex items-center justify-center">
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                fill="none" 
-                viewBox="0 0 24 24" 
-                strokeWidth={1.5} 
-                className="w-8 h-8 text-rose-400"
-              >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  d="M6 20.25h12A2.25 2.25 0 0 0 20.25 18V6A2.25 2.25 0 0 0 18 3.75H6A2.25 2.25 0 0 0 3.75 6v12A2.25 2.25 0 0 0 6 20.25Z" 
-                />
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  d="m15.75 10.5-6 3.75v-7.5l6 3.75Z" 
-                />
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  d="M7.5 3.75v16.5M16.5 3.75v16.5M3.75 7.5h16.5M3.75 12h16.5M3.75 16.5h16.5" 
-                />
-              </svg>
-            </div>
-          </div>
-
-          {/* Title */}
-          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4 select-none">
-            <span className="bg-gradient-to-r from-white via-neutral-100 to-neutral-400 bg-clip-text text-transparent">
-              Cine
-            </span>
-            <span className="bg-gradient-to-r from-rose-500 to-amber-500 bg-clip-text text-transparent">
-              Match
-            </span>
+          <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight mb-6 bg-gradient-to-b from-white to-zinc-400 bg-clip-text text-transparent leading-tight">
+            Find your next <br />
+            favorite movie.
           </h1>
-
-          {/* Subtitle */}
-          <h2 className="text-lg md:text-2xl font-medium text-neutral-300 mb-6 max-w-md">
-            An AI-powered movie recommendation system.
-          </h2>
-
-          {/* Description */}
-          <p className="text-sm md:text-base text-neutral-400 leading-relaxed max-w-lg mb-8">
-            CineMatch uses machine learning to recommend movies based on content similarity. Discover your next favorite film with recommendations tailored to plot connections, thematic patterns, and storytelling style.
+          <p className="text-zinc-400 text-lg sm:text-xl leading-relaxed max-w-xl mx-auto mb-10">
+            CineMatch analyzes metadata like genre, plot, director, and cast to match your movie taste using mathematical text similarities.
           </p>
 
-          {/* Minimal Interaction (Notify Me/Sign Up Placeholder) */}
-          <div className="w-full max-w-sm flex flex-col sm:flex-row gap-2">
-            <input 
-              type="email" 
-              placeholder="Enter your email for updates..." 
-              disabled 
-              className="flex-1 px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 text-sm text-neutral-400 placeholder:text-neutral-600 focus:outline-none cursor-not-allowed select-none"
-            />
-            <button 
-              disabled
-              className="px-6 py-2.5 rounded-xl text-sm font-semibold bg-white/10 text-neutral-400 border border-white/5 cursor-not-allowed select-none"
-            >
-              Notify Me
-            </button>
+          {/* Search Box */}
+          <SearchBox />
+        </section>
+
+        {/* Popular Starting Movies Section */}
+        {popularMovies.length > 0 && (
+          <section className="w-full mb-20">
+            <div className="flex items-center gap-2 mb-8 border-b border-zinc-900 pb-4">
+              <Award className="h-5 w-5 text-rose-500" />
+              <h2 className="text-xl font-bold text-white tracking-wide">Popular Starters</h2>
+              <span className="text-xs text-zinc-500 ml-auto">Click a movie to view matches</span>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
+              {popularMovies.map((movie) => (
+                <MovieCard
+                  key={movie.id}
+                  id={movie.id}
+                  title={movie.title}
+                  release_date={movie.release_date}
+                  genres={movie.genres}
+                  vote_average={movie.vote_average}
+                  poster_path={movie.poster_path}
+                />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Explainability Pipeline Segment */}
+        <section className="w-full max-w-4xl mx-auto bg-zinc-900/20 border border-zinc-900 rounded-3xl p-8 sm:p-12 backdrop-blur-sm">
+          <div className="text-center mb-10">
+            <h3 className="text-2xl font-bold text-white mb-2">How CineMatch Works</h3>
+            <p className="text-zinc-500 text-sm">Our offline ML pipeline runs content-based filtering in 5 steps</p>
           </div>
-        </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-6 relative">
+            {/* Step 1 */}
+            <div className="flex flex-col items-center text-center p-4">
+              <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-rose-500 mb-4 shadow-lg">
+                <Film className="h-6 w-6" />
+              </div>
+              <h4 className="font-bold text-sm text-zinc-200 mb-1">01. Metadata</h4>
+              <p className="text-xs text-zinc-500">Collect overview, cast, genres & keywords from TMDB.</p>
+            </div>
+
+            {/* Step 2 */}
+            <div className="flex flex-col items-center text-center p-4">
+              <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-rose-500 mb-4 shadow-lg">
+                <GitBranch className="h-6 w-6" />
+              </div>
+              <h4 className="font-bold text-sm text-zinc-200 mb-1">02. Engineering</h4>
+              <p className="text-xs text-zinc-500">Concatenate details, weighting genres and crew heavily.</p>
+            </div>
+
+            {/* Step 3 */}
+            <div className="flex flex-col items-center text-center p-4">
+              <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-rose-500 mb-4 shadow-lg">
+                <Binary className="h-6 w-6" />
+              </div>
+              <h4 className="font-bold text-sm text-zinc-200 mb-1">03. TF-IDF</h4>
+              <p className="text-xs text-zinc-500">Convert tokens into text TF-IDF vector representations.</p>
+            </div>
+
+            {/* Step 4 */}
+            <div className="flex flex-col items-center text-center p-4">
+              <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-rose-500 mb-4 shadow-lg">
+                <LineChart className="h-6 w-6" />
+              </div>
+              <h4 className="font-bold text-sm text-zinc-200 mb-1">04. Cosine Sim</h4>
+              <p className="text-xs text-zinc-500">Calculate similarity angles between movie vectors.</p>
+            </div>
+
+            {/* Step 5 */}
+            <div className="flex flex-col items-center text-center p-4">
+              <div className="w-12 h-12 rounded-2xl bg-rose-550 flex items-center justify-center text-white mb-4 shadow-lg shadow-rose-500/25">
+                <Award className="h-6 w-6" />
+              </div>
+              <h4 className="font-bold text-sm text-zinc-200 mb-1">05. Recommendations</h4>
+              <p className="text-xs text-zinc-500">Store and query the top 10 recommended matches.</p>
+            </div>
+          </div>
+        </section>
       </main>
 
-      {/* Footer */}
-      <footer className="w-full max-w-5xl flex flex-col sm:flex-row justify-between items-center gap-4 py-4 border-t border-white/5 z-10">
-        <span className="text-xs text-neutral-500 select-none">
-          CineMatch — Machine Learning Project
-        </span>
-        <span className="text-xs text-neutral-600 select-none">
-          © {new Date().getFullYear()} CineMatch. All rights reserved.
-        </span>
-      </footer>
+      <Footer />
     </div>
   );
 }
